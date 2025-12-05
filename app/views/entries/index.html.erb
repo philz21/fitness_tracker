@@ -1,0 +1,152 @@
+<div class="hero-image mb-5">
+  <img src="<%= asset_path 'training.jpg' %>" alt="Gym" class="hero-image">
+
+  <div class="hero-overlay"></div>
+
+  <div class="hero-text px-3">
+    <h1 class="display-5 fw-bold mb-2">KofiGainz Progress Tracker</h1>
+    <p class="lead mb-0">Log your sessions, track your strength, stay consistent 💪</p>
+  </div>
+</div>
+
+
+<% if notice.present? %>
+  <div class="container">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%= notice %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  </div>
+<% end %>
+
+<div class="container">
+
+  <!-- ADD WORKOUT SESSION (CARD 1) -->
+  <section class="mb-5">
+    <div class="card shadow-sm w-100">
+      <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">Add workout session</h5>
+      </div>
+      <div class="card-body">
+        <%= form_with model: @entry do |f| %>
+          <div class="mb-3">
+            <%= f.label :performed_on, "Date", class: "form-label" %>
+            <%= f.date_field :performed_on, class: "form-control" %>
+          </div>
+
+          <div class="mb-3">
+            <%= f.label :exercise_name, "Exercise", class: "form-label" %>
+            <%= f.text_field :exercise_name, class: "form-control", placeholder: "e.g. Bench press" %>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-4 mb-3 mb-md-0">
+              <%= f.label :sets, class: "form-label" %>
+              <%= f.number_field :sets, class: "form-control", min: 1 %>
+            </div>
+            <div class="col-md-4 mb-3 mb-md-0">
+              <%= f.label :reps, class: "form-label" %>
+              <%= f.number_field :reps, class: "form-control", min: 1 %>
+            </div>
+            <div class="col-md-4">
+              <%= f.label :weight, "Weight (kg)", class: "form-label" %>
+              <%= f.number_field :weight, step: 0.5, class: "form-control", min: 0 %>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end">
+            <%= f.submit "Save workout", class: "btn btn-primary px-4" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+  <!-- WORKOUT HISTORY (CARD 2) -->
+  <section class="mb-5">
+    <div class="card-header bg-white border-0 border-bottom">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h5 class="mb-0">Workout history</h5>
+            
+            <div class="d-flex align-items-center gap-2">
+                <%= form_with url: root_path, method: :get, local: true, class: "d-flex align-items-center gap-2" do |f| %>
+
+            <!-- Search box -->
+            <%= f.search_field :query,
+                value: @query,
+                class: "form-control form-control-sm",
+                placeholder: "Search exercise..." %>
+
+            <!-- Sort dropdown -->
+            <%= f.select :sort,
+                options_for_select(
+                    [
+                    ["Newest first",      "newest"],
+                    ["Oldest first",      "oldest"],
+                    ["Heaviest weight",   "heaviest"],
+                    ["Most reps",         "most_reps"],
+                    ["Highest volume",    "highest_volume"]
+                    ],
+                    @sort || "newest"
+                ),
+                {},
+                class: "form-select form-select-sm" %>
+
+            <%= f.submit "Apply", class: "btn btn-sm btn-outline-secondary" %>
+        <% end %>
+
+        <% if @query.present? || @sort.present? %>
+            <%= link_to "Clear", root_path, class: "btn btn-sm btn-link text-decoration-none" %>
+        <% end %>
+
+        <span class="badge bg-secondary">
+            <%= @entries.count %> session<%= "s" unless @entries.count == 1 %>
+        </span>
+        </div>
+    </div>
+    </div>
+
+      <div class="card-body p-0">
+        <% if @entries.any? %>
+          <div class="table-responsive">
+            <table class="table table-striped mb-0 align-middle">
+              <thead class="table-light">
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Exercise</th>
+                  <th scope="col">Sets</th>
+                  <th scope="col">Reps</th>
+                  <th scope="col">Weight (kg)</th>
+                  <th scope="col" class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @entries.each do |entry| %>
+                  <tr>
+                    <td><%= entry.performed_on&.strftime("%d %b %Y") %></td>
+                    <td class="fw-semibold"><%= entry.exercise_name %></td>
+                    <td><%= entry.sets %></td>
+                    <td><%= entry.reps %></td>
+                    <td><%= entry.weight %></td>
+                    <td class="text-end">
+                      <%= link_to "Edit", edit_entry_path(entry), class: "btn btn-sm btn-outline-primary me-1" %>
+                      <%= button_to "Delete", entry,
+                            method: :delete,
+                            form: { class: "d-inline" },
+                            data: { confirm: "Delete this session?" },
+                            class: "btn btn-sm btn-outline-danger" %>
+                    </td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+          </div>
+        <% else %>
+          <p class="p-3 mb-0 text-muted">No workouts logged yet. Add your first one above.</p>
+        <% end %>
+      </div>
+    </div>
+  </section>
+
+</div>
+

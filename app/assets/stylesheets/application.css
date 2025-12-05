@@ -1,0 +1,53 @@
+/* =======================================
+   Custom Styles for Fitness Tracker
+   ======================================= */
+
+/* Hero section styling */
+
+.hero-image {
+  position: relative;
+  height: 600px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.15);
+}
+
+.hero-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  height: 100%;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(0,0,0,0.65), rgba(0,0,0,0.25));
+}
+
+.hero-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  text-align: center;
+}
+
+/* Card shadow consistency */
+.card-shadow {
+  box-shadow: 0 4px 10px rgba(0,0,0,0.10) !important;
+}
+
+.edit-card{
+    padding-top: 50px;
+}
+
+
+/* Footer styling */
+.footer-text {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
