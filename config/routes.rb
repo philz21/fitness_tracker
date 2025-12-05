@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "progress/index"
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
@@ -13,4 +14,6 @@ Rails.application.routes.draw do
   # My routes
   root "entries#index"
   resources :entries
+
+  get "progress", to: "progress#index", as: :progress
 end
