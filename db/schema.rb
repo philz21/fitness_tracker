@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_12_05_112814) do
+ActiveRecord::Schema[7.2].define(version: 2025_12_05_171945) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,7 +23,20 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_05_112814) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id"
+    t.bigint "exercise_id"
+    t.index ["exercise_id"], name: "index_entries_on_exercise_id"
     t.index ["user_id"], name: "index_entries_on_user_id"
+  end
+
+  create_table "exercises", force: :cascade do |t|
+    t.string "external_id"
+    t.string "name"
+    t.string "body_part"
+    t.string "target"
+    t.string "equipment"
+    t.string "image_url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "users", force: :cascade do |t|
@@ -48,5 +61,6 @@ ActiveRecord::Schema[7.2].define(version: 2025_12_05_112814) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "entries", "exercises"
   add_foreign_key "entries", "users"
 end

@@ -33,3 +33,11 @@
 
 # Ignore master key for decrypting credentials and more.
 /config/master.key
+
+# Playwright
+node_modules/
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

@@ -21,12 +21,31 @@
 
 <div class="container">
 
-  <!-- ADD WORKOUT SESSION (CARD 1) -->
+    <% if params[:exercise].present? %>
+        <div class="alert alert-info mb-3">
+            You're adding a session for
+            <strong><%= params[:exercise] %></strong>.
+        </div>
+    <% end %>
+
+  <!-- ADD WORKOUT SESSION -->
   <section class="mb-5">
     <div class="card shadow-sm w-100">
       <div class="card-header bg-primary text-white">
         <h5 class="mb-0">Add workout session</h5>
       </div>
+
+        <% if @entry.errors.any? %>
+            <div class="alert alert-danger">
+                <p class="mb-1"><strong>There were problems with your entry:</strong></p>
+                <ul class="mb-0">
+                <% @entry.errors.full_messages.each do |msg| %>
+                    <li><%= msg %></li>
+                <% end %>
+                </ul>
+            </div>
+        <% end %>
+
       <div class="card-body">
         <%= form_with model: @entry do |f| %>
           <div class="mb-3">
@@ -121,25 +140,51 @@
                 </tr>
               </thead>
               <tbody>
-                <% @entries.each do |entry| %>
-                  <tr>
-                    <td><%= entry.performed_on&.strftime("%d %b %Y") %></td>
-                    <td class="fw-semibold"><%= entry.exercise_name %></td>
-                    <td><%= entry.sets %></td>
-                    <td><%= entry.reps %></td>
-                    <td><%= entry.weight %></td>
-                    <td class="text-end">
-                      <%= link_to "Edit", edit_entry_path(entry), class: "btn btn-sm btn-outline-primary me-1" %>
-                      <%= button_to "Delete", entry,
-                            method: :delete,
-                            form: { class: "d-inline" },
-                            data: { confirm: "Delete this session?" },
-                            class: "btn btn-sm btn-outline-danger" %>
-                    </td>
-                  </tr>
+                <% @entries.group_by(&:performed_on).each do |date, entries_for_day| %>
+                    <!-- Date group header row -->
+                    <tr class="table-secondary">
+                        <th colspan="6">
+                            <%= date ? date.strftime("%A %d %b %Y") : "No date recorded" %>
+                        </th>
+                    </tr>
+
+
+                    <% entries_for_day.each do |entry| %>
+                    <tr>
+                        <td><%= entry.performed_on&.strftime("%d %b %Y") %></td>
+                        <td class="fw-semibold"><%= entry.exercise_name %></td>
+                        <td><%= entry.sets %></td>
+                        <td><%= entry.reps %></td>
+                        <td><%= entry.weight %></td>
+                        <td class="text-end">
+                        <%= link_to "View progress",
+                                    progress_path(exercise: entry.exercise_name),
+                                    class: "btn btn-sm btn-outline-secondary me-1" %>
+
+                        <%= link_to "Edit",
+                                    edit_entry_path(entry),
+                                    class: "btn btn-sm btn-outline-primary me-1" %>
+
+                        <%= button_to "Delete",
+                                        entry,
+                                        method: :delete,
+                                        form:  { class: "d-inline" },
+                                        data:  { confirm: "Delete this session?" },
+                                        class: "btn btn-sm btn-outline-danger" %>
+                        </td>
+                    </tr>
+                    <% end %>
                 <% end %>
-              </tbody>
+            </tbody>
+
             </table>
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <small class="text-muted">
+                    Showing <%= @entries.count %> of <%= @entries.total_count %> sessions
+                </small>
+                <%= paginate @entries %>
+
+            </div>
           </div>
         <% else %>
           <p class="p-3 mb-0 text-muted">No workouts logged yet. Add your first one above.</p>

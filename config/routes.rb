@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "exercises/index"
   get "progress/index"
   devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
@@ -14,6 +15,13 @@ Rails.application.routes.draw do
   # My routes
   root "entries#index"
   resources :entries
+  resources :exercises, only: [:index] 
 
   get "progress", to: "progress#index", as: :progress
+  get "exercise_images/:id", to: "exercises#image", as: :exercise_image
+
+  if Rails.env.test?
+    post '/test/cleanup', to: 'test_support#cleanup'
+  end
+
 end

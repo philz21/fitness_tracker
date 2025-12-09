@@ -1,0 +1,66 @@
+<div class="container py-5">
+  <h1 class="mb-4">Exercise library</h1>
+
+    <% if flash[:alert].present? %>
+    <div class="alert alert-warning">
+      <%= flash[:alert] %>
+    </div>
+  <% end %>
+
+  <!-- Search form -->
+  <%= form_with url: exercises_path, method: :get, local: true, class: "row g-2 mb-4" do |f| %>
+    <div class="col-md-6">
+      <%= f.text_field :query,
+            value: @query,
+            class: "form-control",
+            placeholder: "Search exercise name (e.g. bench press, squat…)" %>
+    </div>
+    <div class="col-md-3">
+      <%= f.submit "Search", class: "btn btn-primary w-100" %>
+    </div>
+  <% end %>
+
+  <% if @query.present? %>
+    <p class="text-muted mb-3">
+      Showing <%= @results.size %> result<%= "s" unless @results.size == 1 %>
+      for "<strong><%= @query %></strong>"
+    </p>
+  <% end %>
+
+  <% if @query.present? && @results.empty? %>
+    <div class="alert alert-warning">
+      No exercises found. Try a different name (e.g. "press", "row", "curl").
+    </div>
+  <% end %>
+
+<div class="row row-cols-1 row-cols-md-3 g-4">
+  <% @results.each do |exercise| %>
+    <div class="col">
+      <div class="card h-100 shadow-sm">
+
+        <% if exercise.image_url.present? %>
+        <img src="<%= exercise.image_url %>"
+            class="card-img-top"
+            alt="<%= exercise.name %>">
+        <% end %>
+
+        <div class="card-body">
+        <h5 class="card-title mb-2"><%= exercise.name %></h5>
+        <p class="card-text mb-1">
+            <strong>Body part:</strong> <%= exercise.body_part %><br>
+            <strong>Target:</strong> <%= exercise.target %><br>
+            <strong>Equipment:</strong> <%= exercise.equipment %>
+        </p>
+        </div>
+
+        <div class="card-footer bg-white border-0">
+            <%= link_to "Use this exercise",root_path(exercise: exercise.name),class: "btn btn-outline-primary w-100" %>
+        </div>
+
+      </div>
+    </div>
+  <% end %>
+</div>
+
+
+

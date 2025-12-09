@@ -26,6 +26,7 @@ gem "devise"
 # visual graphs
 gem "chartkick"
 gem "groupdate"
+gem "kaminari"
 
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]

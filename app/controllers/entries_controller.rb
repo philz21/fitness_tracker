@@ -2,6 +2,11 @@ class EntriesController < ApplicationController
     #before_action :authenticate_user!
   def index
     @entry = Entry.new
+
+    if params[:exercise].present?
+      @entry.exercise_name = params[:exercise]
+    end
+
     @query = params[:query]
     @sort  = params[:sort]
 
@@ -11,8 +16,7 @@ class EntriesController < ApplicationController
     # Apply search filter (if any)
     if @query.present?
       @entries = @entries.where("exercise_name ILIKE ?", "%#{@query}%")
-      # If you are using SQLite instead of Postgres, use this instead:
-      # @entries = @entries.where("exercise_name LIKE ?", "%#{@query}%")
+
     end
 
     # Apply sorting
@@ -31,6 +35,7 @@ class EntriesController < ApplicationController
         # default: newest first
         @entries.order(performed_on: :desc)
       end
+     @entries = @entries.page(params[:page]).per(10)
   end
 
   def create
@@ -38,7 +43,7 @@ class EntriesController < ApplicationController
     if @entry.save
       redirect_to root_path, notice: "Workout entry added!"
     else
-      @entries = Entry.order(performed_on: :desc)
+      @entries = Entry.order(performed_on: :desc).page(params[:page]).per(10)
       render :index, status: :unprocessable_entity
     end
   end
@@ -64,6 +69,6 @@ class EntriesController < ApplicationController
   private
 
   def entry_params
-    params.require(:entry).permit(:exercise_name, :sets, :reps, :weight, :performed_on)
+    params.require(:entry).permit(:exercise_name, :sets, :reps, :weight, :performed_on, :exercise_id)
   end
 end

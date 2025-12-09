@@ -1,10 +1,23 @@
 <div class="container my-4">
   <h1 class="mb-4">Progress chart</h1>
 
+  <!-- Little subtitle -->
+  <p class="text-muted">
+    <% if @exercise.present? %>
+      Showing progress for <strong><%= @exercise %></strong>
+    <% else %>
+      Showing progress for all exercises
+    <% end %>
+  </p>
+
   <!-- Filter form -->
   <div class="card shadow-sm mb-4">
     <div class="card-body">
-      <%= form_with url: progress_path, method: :get, local: true, class: "row g-3 align-items-end" do |f| %>
+      <%= form_with url: progress_path,
+                    method: :get,
+                    local: true,
+                    class: "row g-3 align-items-end" do |f| %>
+
         <div class="col-md-6">
           <%= f.label :exercise, "Filter by exercise", class: "form-label" %>
           <%= f.select :exercise,
@@ -19,7 +32,8 @@
 
         <% if @exercise.present? %>
           <div class="col-md-3 text-md-end">
-            <%= link_to "Clear filter", progress_path, class: "btn btn-outline-secondary w-100" %>
+            <%= link_to "Clear filter", progress_path,
+                        class: "btn btn-outline-secondary w-100" %>
           </div>
         <% end %>
       <% end %>
@@ -28,26 +42,21 @@
 
   <!-- Chart card -->
   <div class="card shadow-sm">
-    <div class="card-header">
-      <h5 class="mb-0"><%= @chart_title %></h5>
+    <div class="card-header bg-white">
+      <strong><%= @chart_title || "Progress over time" %></strong>
     </div>
-
     <div class="card-body">
       <% if @series_by_day.present? %>
         <%= line_chart @series_by_day,
-              xtitle: "Date",
-              ytitle: @y_axis_label %>
+                       xtitle: "Date",
+                       ytitle: (@y_axis_label || "Value") %>
       <% else %>
         <p class="text-muted mb-0">
-          No data available yet for
-          <% if @exercise.present? %>
-            "<%= @exercise %>".
-          <% else %>
-            your workouts. Log some sessions first!
-          <% end %>
+          No data yet. Log some workouts to see your progress.
         </p>
       <% end %>
     </div>
   </div>
 </div>
+
 

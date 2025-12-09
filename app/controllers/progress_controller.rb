@@ -1,27 +1,36 @@
 class ProgressController < ApplicationController
   def index
-    # What exercise has been selected from the dropdown?
-    @exercise  = params[:exercise]
+    @exercise = params[:exercise]
 
-    # List of unique exercise names for the dropdown
-    @exercises = Entry.distinct.order(:exercise_name).pluck(:exercise_name)
+    # Dropdown options – unique, nicely formatted
+    @exercises =
+      Entry
+        .select("DISTINCT LOWER(exercise_name) AS name")
+        .order("name")
+        .map { |e| e.name.titleize }
 
-    # Base scope
     scope = Entry.all
 
     if @exercise.present?
-      scope = scope.where(exercise_name: @exercise)
+      # Filter to that exercise
+      scope = scope.where("LOWER(exercise_name) = ?", @exercise.downcase)
 
-      # For a specific exercise: show max weight per day
-      @chart_title       = "Max weight per day for #{@exercise}"
-      @series_by_day     = scope.group_by_day(:performed_on).maximum(:weight)
-      @y_axis_label      = "Weight (kg)"
+      # One point per day: max weight on that day
+      @series_by_day = scope.group(:performed_on).maximum(:weight)
+
+      @chart_title  = "Max weight per day for #{@exercise}"
+      @y_axis_label = "Weight (kg)"
     else
-      # No exercise chosen: show total volume for all exercises
-      @chart_title   = "Total training volume per day"
-      @series_by_day = scope.group_by_day(:performed_on).sum("sets * reps * weight")
-      @y_axis_label  = "Volume (sets × reps × weight)"
+      # All exercises → total volume per day
+      @series_by_day = scope.group(:performed_on).sum("sets * reps * weight")
+
+      @chart_title  = "Total training volume per day"
+      @y_axis_label = "Volume"
     end
   end
 end
+
+
+
+
 
