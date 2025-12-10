@@ -1,6 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-// Run before every test
 
 test.beforeEach(async ({ request }) => {
   // hit the cleanup endpoint before every test
@@ -8,7 +7,7 @@ test.beforeEach(async ({ request }) => {
 });
 
 test.beforeEach(async ({ page }) => {
-  await page.goto('/');        // uses baseURL from config
+  await page.goto('/');        
 });
 
 test('has title', async ({ page }) => {
@@ -72,7 +71,7 @@ test('search filters workout history by exercise name', async ({ page }) => {
 
   // Clear search (adjust selector if your UI is different)
   await page.getByRole('link', { name: 'Clear' }).click();
-  await expect(page.getByText('Squat')).toBeVisible();
+  await expect(page.getByRole('cell', { name: 'Squat' })).not.toHaveCount(0);
 });
 
 

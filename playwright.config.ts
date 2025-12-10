@@ -25,20 +25,25 @@ export default defineConfig({
   reporter: 'html',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    /* Base URL to use in actions like `await page.goto('')`. */
-    // baseURL: 'http://localhost:3000',
     baseURL: 'http://127.0.0.1:3000', 
-    headless: true,
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    headless: false,
+    viewport: null,
+    launchOptions: {
+    slowMo: 1500,
+    args: ['--start-maximized'],        
+  },
     trace: 'on-first-retry',
   },
+
+  
+
+
 
   webServer: {
     command: 'RAILS_ENV=test bin/rails server -p 3000',
     url: 'http://127.0.0.1:3000',
-    reuseExistingServer: !process.env.CI,
     timeout: 120_000,
+    
   },
 
   /* Configure projects for major browsers */

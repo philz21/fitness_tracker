@@ -6,7 +6,8 @@ class EntriesController < ApplicationController
     if params[:exercise].present?
       @entry.exercise_name = params[:exercise]
     end
-
+  
+    
     @query = params[:query]
     @sort  = params[:sort]
 
@@ -36,6 +37,11 @@ class EntriesController < ApplicationController
         @entries.order(performed_on: :desc)
       end
      @entries = @entries.page(params[:page]).per(10)
+
+    respond_to do |format|
+      format.html                               
+      format.json { render json: @entries }     
+    end
   end
 
   def create

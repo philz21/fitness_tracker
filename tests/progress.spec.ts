@@ -1,24 +1,33 @@
 import { test, expect } from '@playwright/test';
 
+
 test.describe('Progress chart', () => {
-  test.beforeEach(async ({ page }) => {
-    // Seed: add a couple of entries directly via UI
+  test.beforeEach(async ({ request ,page }) => {
+    await request.post('/test/cleanup');
     await page.goto('/');
 
-    // Bench Press day 1
+    // First Bench Session
     await page.getByLabel('Date').fill('2025-12-01');
     await page.getByLabel('Exercise').fill('Bench Press');
     await page.getByLabel('Sets').fill('3');
     await page.getByLabel('Reps').fill('8');
-    await page.getByLabel('Weight (kg)').fill('60');
+    await page.getByLabel('Weight (kg)').fill('65');
     await page.getByRole('button', { name: 'Save workout' }).click();
 
-    // Bench Press day 2 (heavier)
+    // Second Bench session
     await page.getByLabel('Date').fill('2025-12-05');
     await page.getByLabel('Exercise').fill('Bench Press');
     await page.getByLabel('Sets').fill('3');
     await page.getByLabel('Reps').fill('8');
-    await page.getByLabel('Weight (kg)').fill('70');
+    await page.getByLabel('Weight (kg)').fill('85');
+    await page.getByRole('button', { name: 'Save workout' }).click();
+
+    // Third bench session (lighter)
+    await page.getByLabel('Date').fill('2025-12-10');
+    await page.getByLabel('Exercise').fill('Bench Press');
+    await page.getByLabel('Sets').fill('3');
+    await page.getByLabel('Reps').fill('8');
+    await page.getByLabel('Weight (kg)').fill('75');
     await page.getByRole('button', { name: 'Save workout' }).click();
   });
 
@@ -36,7 +45,6 @@ test.describe('Progress chart', () => {
 
     // Check that chart container exists
     await expect(chartContainer).toBeVisible();
-
     await expect(chartContainer.locator('svg')).toBeVisible();
   });
 });

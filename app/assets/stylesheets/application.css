@@ -6,7 +6,7 @@
 
 .hero-image {
   position: relative;
-  height: 600px;
+  height: 500px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(255, 255, 255, 0.15);
 }
@@ -52,3 +52,5 @@
   font-size: 0.85rem;
   color: #6c757d;
 }
+
+
